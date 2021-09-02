@@ -57,6 +57,14 @@ payload]]></ee:set-payload>
 			</when>
 			<otherwise >
 				<logger level="INFO" doc:name="Logger" doc:id="023a5d91-a0ee-4289-b507-222099bfe32f" message="#[payload]" />
+				<ee:transform doc:name="Transform Message" doc:id="732fe2fe-b836-4066-99ac-0de087d5f3de" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
 			</otherwise>
 		</choice>
 		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="9b9b8fcb-4a8e-4549-908c-6d0ddce07d24" />
