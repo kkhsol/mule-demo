@@ -13,14 +13,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<set-variable doc:name="Set Variable" doc:id="b9930327-1e77-413c-87de-9d6916528242" variableName="request" value="#[payload.request]"/>
 		<ee:transform doc:name="Transform Message" doc:id="3a343bd2-f791-43aa-a218-0abc4badfc97">
 			<ee:message>
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"Isaak": "First demo",
-	"Kahsay": "First demo",
-	"status": "Succesfull"
-}]]></ee:set-payload>
+				<ee:set-payload resource="dw/dataweave.dwl" />
 			</ee:message>
 			<ee:variables>
 				<ee:set-variable variableName="b"><![CDATA[%dw 2.0
