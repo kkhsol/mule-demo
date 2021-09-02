@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1154b472-6a4b-471a-9fbd-698d61eaf48d" basePath="/api" >
+		<http:listener-connection host="0.0.0.0" port="9091" />
+	</http:listener-config>
+	<flow name="mule-demoFlow" doc:id="5cbc330b-59a2-4a79-be76-8d173b941bfc" >
+		<http:listener doc:name="Listener" doc:id="59958333-6264-48c1-afd2-22a38afb930b" config-ref="HTTP_Listener_config" path="/demo"/>
+		<set-variable doc:name="Set Variable" doc:id="b9930327-1e77-413c-87de-9d6916528242" variableName="request" value="#[payload.request]"/>
+		<ee:transform doc:name="Transform Message" doc:id="3a343bd2-f791-43aa-a218-0abc4badfc97">
+			<ee:message>
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Isaak": "First demo",
+	"Kahsay": "First demo",
+	"status": "Succesfull"
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="b"><![CDATA[%dw 2.0
+output application/json
+---
+"This is variable b "]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<set-payload value='#[%dw 2.0
+&#10;output application/json
+&#10;---
+&#10;{
+&#10;	"variables": {
+&#10;		"a": vars.a,
+&#10;		"b": vars.b
+&#10;	},
+&#10;	"payload": payload
+&#10;}]' doc:name="Set Payload" doc:id="4fb61739-247b-4a48-b55f-13cc61ac49cf" />
+		<choice doc:name="Choice" doc:id="19cb229c-d1c4-4982-9b88-57bf57efb696" >
+			<when expression='#[vars.request == "Isaak-xml"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="dd5aaf1e-4ab9-4c6c-b699-9bcdf9402580" />
+				<ee:transform doc:name="Transform Message" doc:id="a07bf4e6-89be-40cc-b72b-5752402c905e">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+---
+a:payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[vars.request == "Kahsay-json"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="7733644e-1fed-40e4-86e8-799362c9a42f" />
+				<ee:transform doc:name="Transform Message" doc:id="23c70273-4161-4a43-a2dc-910500475b17" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="023a5d91-a0ee-4289-b507-222099bfe32f" message="#[payload]" />
+			</otherwise>
+		</choice>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="9b9b8fcb-4a8e-4549-908c-6d0ddce07d24" />
+	</flow>
+</mule>
